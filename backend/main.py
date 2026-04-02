@@ -8,9 +8,18 @@ import os
 import re
 from datetime import datetime
 from groq import Groq
+from dotenv import load_dotenv
 
 # --------------------------- DATABASE ---------------------------
-client = MongoClient("mongodb://localhost:27017/")
+load_dotenv()
+MONGODB_URL=os.getenv("MONGODB_URL")
+print("Mongo URL:", MONGODB_URL)
+client = MongoClient(MONGODB_URL) 
+try:
+    client.admin.command("ping")
+    print("✅ MongoDB connection SUCCESS")
+except Exception as e:
+    print("❌ MongoDB connection FAILED:", e)
 db = client["canteen_ai"]
 users_col = db["users"]
 orders_col = db["orders"]
