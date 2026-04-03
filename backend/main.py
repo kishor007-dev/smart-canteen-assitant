@@ -9,11 +9,14 @@ import re
 from datetime import datetime
 from groq import Groq
 from dotenv import load_dotenv
+import uvicorn
+
 
 # --------------------------- DATABASE ---------------------------
 load_dotenv()
 MONGODB_URL=os.getenv("MONGODB_URL")
-print("Mongo URL:", MONGODB_URL)
+if not MONGODB_URL:
+    raise Exception("MONGODB_URL not set in environment")
 client = MongoClient(MONGODB_URL) 
 try:
     client.admin.command("ping")
@@ -28,6 +31,8 @@ chat_history_col = db["chat_history"]
 
 # --------------------------- groq SETUP ---------------------------
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))  # Ensure this env variable is set
+if not os.getenv("GROQ_API_KEY"):
+    raise Exception("GROQ_API_KEY not set")
 # --------------------------- FASTAPI ---------------------------
 app = FastAPI(title="Smart Canteen AI")
 
@@ -37,6 +42,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.get("/")
+def root():
+    return {
+        "status": "running",
+        "service": "Smart Canteen API",
+        "version": "1.0"
+    }
 
 # --------------------------- MODELS ---------------------------
 class LoginModel(BaseModel):
@@ -461,3 +473,6 @@ async def mark_order_ready(order_id: str):
         await active_connections[student_id].send_text(f"🍽️ Your order for {order['item'].capitalize()} is ready!")
 
     return {"message": f"Order {order_id} marked ready."}
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port)
