@@ -78,8 +78,8 @@ Smart-Canteen-Assitant/
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/kishor006-dev/Smart-Canteen-Assitant.git
-cd Smart-Canteen-Assitant
+git clone https://github.com/kishor007-dev/smart-canteen-assitant
+cd smart-canteen-assitant
 ```
 
 ---
@@ -97,7 +97,7 @@ venv\Scripts\activate
 # Linux / Mac
 source venv/bin/activate
 
-pip install -r backend/requirements.txt
+pip install -r requirements.txt
 ```
 
 ---
@@ -132,7 +132,7 @@ Open in browser using Live Server (VS Code):
 
 ## 🔗 Repository Link
 
-https://github.com/kishor006-dev/Smart-Canteen-Assitant
+https://github.com/kishor007-dev/smart-canteen-assitant
 
 ---
 

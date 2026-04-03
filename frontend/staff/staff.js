@@ -219,4 +219,3 @@ async function setDailySpecial() {
     specialMsg.textContent = data.message;
 }
 
-
