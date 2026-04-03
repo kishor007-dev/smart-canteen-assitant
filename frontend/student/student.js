@@ -204,7 +204,7 @@ function connectWebSocket() {
 
     if (ws) ws.close(); // Close old connection
 
-    ws = new WebSocket(`ws://localhost:8000/ws/${currentUser}`);
+    ws = new WebSocket(`ws://smart-canteen-assitant-3.onrender.com/ws/${currentUser}`);
 
     ws.onmessage = (event) => {
         const message = event.data;
