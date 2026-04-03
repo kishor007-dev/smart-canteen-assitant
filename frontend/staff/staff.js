@@ -61,7 +61,7 @@ async function signup() {
         return;
     }
 
-    const res = await fetch('http://localhost:8000/signup', {
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/signup', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, role })
@@ -87,7 +87,7 @@ async function login() {
         return;
     }
 
-    const res = await fetch('http://localhost:8000/login', {
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/login', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, role: "staff" })
@@ -126,7 +126,7 @@ function logout() {
 
 // ------------------- LOAD PENDING ORDERS -------------------
 async function loadPendingOrders() {
-    const res = await fetch('http://localhost:8000/orders/pending');
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/pending');
     const orders = await res.json();
     pendingOrdersList.innerHTML = "";
 
@@ -136,7 +136,7 @@ async function loadPendingOrders() {
         const readyBtn = document.createElement('button');
         readyBtn.textContent = "Mark Ready";
         readyBtn.onclick = async () => {
-            await fetch(`http://localhost:8000/orders/ready/${order._id}`, { method: "POST" });
+            await fetch(`https://smart-canteen-assitant-3.onrender.com/orders/ready/${order._id}`, { method: "POST" });
             loadPendingOrders(); // refresh
         };
         li.appendChild(readyBtn);
@@ -146,7 +146,7 @@ async function loadPendingOrders() {
 
 // ------------------- LOAD MENU -------------------
 async function loadMenu() {
-    const res = await fetch('http://localhost:8000/menu');
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/menu');
     const data = await res.json();
     menuList.innerHTML = "";
     specialSelect.innerHTML = "";
@@ -173,7 +173,7 @@ async function addOrUpdateMenuItem() {
         return;
     }
 
-    const res = await fetch('http://localhost:8000/menu/update', {
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/menu/update', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, price, username: currentUser }) // include username
@@ -193,7 +193,7 @@ async function removeMenuItem() {
         return;
     }
 
-    const res = await fetch('http://localhost:8000/menu/remove', {
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/menu/remove', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, username: currentUser }) // include username
@@ -210,7 +210,7 @@ async function setDailySpecial() {
     const specialItem = specialSelect.value;
     if (!specialItem) return;
 
-    const res = await fetch('http://localhost:8000/menu/special', {
+    const res = await fetch('https://smart-canteen-assitant-3.onrender.com/menu/special', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ special: specialItem, username: currentUser }) // include username
