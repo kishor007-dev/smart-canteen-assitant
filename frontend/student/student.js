@@ -44,7 +44,7 @@ async function login() {
     }
 
     try {
-        const res = await fetch("https://smart-canteen-assitant-3.onrender.com/login", {
+        const res = await fetch("http://localhost:8000/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password, role: "student" })
@@ -80,7 +80,7 @@ async function signup() {
     }
 
     try {
-        const res = await fetch("https://smart-canteen-assitant-3.onrender.com/signup", {
+        const res = await fetch("http://localhost:8000/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password, role: "student" })
@@ -127,7 +127,7 @@ async function loadOrderHistory() {
     if (!currentUser) return;
 
     try {
-        const res = await fetch(`https://smart-canteen-assitant-3.onrender.com/orders/history/${currentUser}`);
+        const res = await fetch(`http://localhost:8000/orders/history/${currentUser}`);
         if (!res.ok) throw new Error("Failed to load order history");
 
         const data = await res.json();
@@ -169,7 +169,7 @@ async function sendMessage() {
     chatInput.value = "";
 
     try {
-        const res = await fetch("https://smart-canteen-assitant-3.onrender.com/chat", {
+        const res = await fetch("http://localhost:8000/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ studentId: currentUser, message: msg })
@@ -204,7 +204,7 @@ function connectWebSocket() {
 
     if (ws) ws.close(); // Close old connection
 
-    ws = new WebSocket(`ws://smart-canteen-assitant-3.onrender.com/ws/${currentUser}`);
+    ws = new WebSocket(`ws://localhost:8000/ws/${currentUser}`);
 
     ws.onmessage = (event) => {
         const message = event.data;
