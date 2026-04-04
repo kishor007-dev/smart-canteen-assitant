@@ -16,8 +16,8 @@
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button onclick="login()" class="loginbtn">Login</button>
-            <button onclick="signup()" class="signupbtn">Sign Up</button>
+            <button id="login" class="loginbtn">Login</button>
+            <button id="signup" class="signupbtn">Sign Up</button>
         </div>
         <p id="authError" class="error"></p>
     </div>
@@ -26,7 +26,7 @@
     <div id="chatDiv" style="display:none;">
         <div class="header">
             <h2>Welcome, <span id="studentName"></span></h2>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <button class="logout-btn" id="logout">Logout</button>
         </div>
 
         <div class="card chat-card">
@@ -54,6 +54,6 @@
 <!-- Notification Container -->
 <div id="notifications" class="notification-container"></div>
 
-<script src="student.js"></script>
+<script type="module" src="student.js"></script>
 </body>
 </html>

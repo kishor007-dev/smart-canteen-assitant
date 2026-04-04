@@ -1,3 +1,6 @@
+// ------------------- CONFIG -------------------
+import { API_URL, WS_URL } from "./config.js";
+
 // ------------------- ELEMENTS -------------------
 const authDiv = document.getElementById("authDiv");
 const chatDiv = document.getElementById("chatDiv");
@@ -8,26 +11,34 @@ const studentNameSpan = document.getElementById("studentName");
 const chatBox = document.getElementById("chatBox");
 const chatInput = document.getElementById("chatInput");
 const notifications = document.getElementById("notifications");
+const orderHistorySection = document.getElementById("orderHistorySection");
+const orderHistoryList = document.getElementById("orderHistoryList");
+const recentOrdersBtn = document.getElementById("recentOrdersBtn");
 
 let currentUser = null;
 let ws = null;
+
 // ------------------- AUTO LOGIN ON REFRESH -------------------
 window.onload = () => {
+    document.getElementById("login").addEventListener("click", login);
+    document.getElementById("signup").addEventListener("click", signup);
+    document.getElementById("logout").addEventListener("click", logout);
+
+    recentOrdersBtn.addEventListener("click", () => {
+        orderHistorySection.classList.toggle("show");
+    });
+
     const savedUser = localStorage.getItem("studentUser");
     if (savedUser) {
         currentUser = savedUser;
-
         authDiv.style.display = "none";
         chatDiv.style.display = "block";
-        
         studentNameSpan.textContent = currentUser;
         connectWebSocket();
         addBotMessage(`👋 Welcome back ${currentUser}! How can I help you today?`);
-        loadOrderHistory();   // <--- add this
-
+        loadOrderHistory();
     }
 };
-
 
 // ------------------- REQUEST NOTIFICATION PERMISSION -------------------
 if ("Notification" in window && Notification.permission !== "granted") {
@@ -44,7 +55,7 @@ async function login() {
     }
 
     try {
-        const res = await fetch("http://localhost:8000/login", {
+        const res = await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password, role: "student" })
@@ -53,17 +64,13 @@ async function login() {
         if (!res.ok) throw new Error(data.detail || "Login failed");
 
         currentUser = username;
-localStorage.setItem("studentUser", username);   // <<< store username
-
-studentNameSpan.textContent = currentUser;
-authDiv.style.display = "none";
-chatDiv.style.display = "block";
-
-connectWebSocket();
-addBotMessage(`👋 Hello ${currentUser}! You can ask me about the menu, place orders, or just chat.`);
-loadOrderHistory();  // <--- add this
-
-
+        localStorage.setItem("studentUser", username);
+        studentNameSpan.textContent = currentUser;
+        authDiv.style.display = "none";
+        chatDiv.style.display = "block";
+        connectWebSocket();
+        addBotMessage(`👋 Hello ${currentUser}! You can ask me about the menu, place orders, or just chat.`);
+        loadOrderHistory();
     } catch (err) {
         authError.style.color = "red";
         authError.textContent = err.message;
@@ -80,7 +87,7 @@ async function signup() {
     }
 
     try {
-        const res = await fetch("http://localhost:8000/signup", {
+        const res = await fetch(`${API_URL}/signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password, role: "student" })
@@ -98,14 +105,9 @@ async function signup() {
 
 // ------------------- LOGOUT -------------------
 function logout() {
-    localStorage.removeItem("studentUser");   // <<< clear session storage
+    localStorage.removeItem("studentUser");
     currentUser = null;
-
-    if (ws) {
-        ws.close();
-        ws = null;
-    }
-
+    if (ws) { ws.close(); ws = null; }
     authDiv.style.display = "block";
     chatDiv.style.display = "none";
     chatBox.innerHTML = "";
@@ -113,21 +115,11 @@ function logout() {
 }
 
 // ------------------- ORDER HISTORY -------------------
-const orderHistorySection = document.getElementById("orderHistorySection");
-const orderHistoryList = document.getElementById("orderHistoryList");
-const recentOrdersBtn = document.getElementById("recentOrdersBtn");
-
-recentOrdersBtn.addEventListener("click", () => {
-    orderHistorySection.classList.toggle("show");
-});
-
-
-
 async function loadOrderHistory() {
     if (!currentUser) return;
 
     try {
-        const res = await fetch(`http://localhost:8000/orders/history/${currentUser}`);
+        const res = await fetch(`${API_URL}/orders/history/${currentUser}`);
         if (!res.ok) throw new Error("Failed to load order history");
 
         const data = await res.json();
@@ -145,15 +137,18 @@ async function loadOrderHistory() {
             const div = document.createElement("div");
             div.className = "orderItem";
             div.style.cssText = "padding:6px 4px;border-bottom:1px solid #ddd;";
-
             const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString() : "";
+            const tokenBadge = o.token ? `🎫 <strong>#${o.token}</strong> &nbsp;|&nbsp; ` : "";
+            const statusColor = o.status === "ready" ? "green" : "orange";
             div.innerHTML = `
-                <strong>${o.item}</strong>
-                <div style="font-size:12px;color:#555;">${dateStr} — ${o.status}</div>
+                ${tokenBadge}
+                <strong>${o.item.charAt(0).toUpperCase() + o.item.slice(1)}</strong>
+                <div style="font-size:12px;color:#555;">
+                    ${dateStr} — <span style="color:${statusColor};font-weight:bold;">${o.status}</span>
+                </div>
             `;
             orderHistoryList.appendChild(div);
         });
-
     } catch (err) {
         console.error(err);
         orderHistoryList.innerHTML = "<p>Error loading history</p>";
@@ -169,13 +164,18 @@ async function sendMessage() {
     chatInput.value = "";
 
     try {
-        const res = await fetch("http://localhost:8000/chat", {
+        const res = await fetch(`${API_URL}/chat`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ studentId: currentUser, message: msg })
         });
         const data = await res.json();
         addBotMessage(data.reply);
+
+        if (data.token) {
+            addBotMessage(`🎫 Your token number is <strong>#${data.token}</strong>. Show this at the counter when collecting your order.`);
+            loadOrderHistory();
+        }
     } catch (err) {
         addBotMessage("⚠️ Error connecting to server");
     }
@@ -193,7 +193,7 @@ function addUserMessage(msg) {
 function addBotMessage(msg) {
     const div = document.createElement("div");
     div.className = "chat bot";
-     div.innerHTML = msg.replace(/\n/g, "<br>");
+    div.innerHTML = msg.replace(/\n/g, "<br>");
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -201,41 +201,34 @@ function addBotMessage(msg) {
 // ------------------- WEBSOCKET -------------------
 function connectWebSocket() {
     if (!currentUser) return;
+    if (ws) ws.close();
 
-    if (ws) ws.close(); // Close old connection
-
-    ws = new WebSocket(`ws://localhost:8000/ws/${currentUser}`);
+    ws = new WebSocket(`${WS_URL}/ws/${currentUser}`);
 
     ws.onmessage = (event) => {
         const message = event.data;
-
-        // Show in chat
         addBotMessage(message);
 
-        // Show desktop notification
         if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("Canteen AI", { body: message });
+            new Notification("Canteen AI 🍽️", { body: message });
         }
 
-        // Also add in notifications div
         const note = document.createElement("div");
         note.className = "notification";
         note.textContent = message;
         notifications.appendChild(note);
         setTimeout(() => note.remove(), 5000);
+
+        loadOrderHistory();
     };
 
-    ws.onclose = () => console.log("WebSocket closed");
+    ws.onclose = () => {
+        console.log("WebSocket closed, reconnecting...");
+        setTimeout(connectWebSocket, 3000);
+    };
 }
-//voice input
-// const micbtn=document.getElementById("mic-btn");
-// let recognition;
-// if("webkitSpeechRecognition" in window) {
-//     recognition = new webkitSpeechRecognition();
-//     recognition.lang="en-IN";
-//     recognition.onresult=e=>chatInput.value=e.results[0][0].transcript;
-//     micbtn.addEventListener("click",()=>recognition.start());
-// }
+
+// ------------------- VOICE INPUT -------------------
 const micbtn = document.getElementById("mic-btn");
 let recognition;
 
@@ -243,21 +236,13 @@ if ("webkitSpeechRecognition" in window) {
     recognition = new webkitSpeechRecognition();
     recognition.lang = "en-IN";
 
-    recognition.onstart = () => {
-        micbtn.classList.add("listening");
-    };
-
-    recognition.onend = () => {
-        micbtn.classList.remove("listening");
-    };
-
-    recognition.onresult = (e) => {
-        chatInput.value = e.results[0][0].transcript;
-    };
+    recognition.onstart = () => micbtn.classList.add("listening");
+    recognition.onend = () => micbtn.classList.remove("listening");
+    recognition.onresult = (e) => { chatInput.value = e.results[0][0].transcript; };
 
     micbtn.addEventListener("click", () => recognition.start());
 }
-//enter button
-const sendbtn=document.getElementById("send-btn");
-sendbtn.addEventListener("click",sendMessage);
-chatInput.addEventListener("keypress",e=> { if(e.key==="Enter") sendMessage();});
+
+// ------------------- SEND BUTTON / ENTER -------------------
+document.getElementById("send-btn").addEventListener("click", sendMessage);
+chatInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
