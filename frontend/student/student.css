@@ -4,7 +4,7 @@ body {
     background:#f3f4f6;
     margin: 0;
     padding: 0;
-    background-image:url("../assets/canteen.jpg");
+    background-image:url("canteen.jpg");
 }
 .header1{
     text-align: center;
