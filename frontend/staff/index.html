@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Canteen - Staff</title>
+    <link rel="stylesheet" href="staff.css">
+</head>
+<body>
+<div class="header1">🍴SMART <span>CANTEEN</span> ASSISTANT</div>
+<div class="container">
+
+    <!-- Login Section -->
+    <div id="loginDiv" class="card">
+        <h2 id="stafflog">Staff Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="login">Login</button>
+        <p id="loginError" class="error"></p>
+        <p><a href="#" id="signupid">Don't have an account? Sign Up</a></p>
+    </div>
+
+    <!-- Sign Up Section -->
+    <div id="signupDiv" class="card" style="display:none;">
+        <h2 id="staffsign">Staff Sign Up</h2>
+        <input type="text" id="signupUsername" placeholder="Username">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <input type="hidden" id="signupRole" value="staff">
+        <button id="signup">Sign Up</button>
+        <p id="signupError" class="error"></p>
+        <p><a href="#" onclick="showLogin()" id="signupid">Already have account? Login</a></p>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardDiv" style="display:none;">
+        <div class="header">
+            <h2 id="staffhead">Welcome, <span id="staffName"></span></h2>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="card">
+            <h3>Pending Orders</h3>
+            <ul id="pendingOrdersList"></ul>
+        </div>
+        <!-- Menu Management -->
+<div class="card">
+    <h3>Menu Management</h3>
+    <ul id="menuList"></ul>
+    <input type="text" id="menuItemName" placeholder="Item Name">
+    <input type="number" id="menuItemPrice" placeholder="Price">
+    <button id="addmenu">Add/Update Item</button>
+    <button id="removeitem">Remove Item</button>
+</div>
+<!-- Daily Special -->
+<div class="card">
+    <h3>Set Daily Special</h3>
+    <select id="specialSelect"></select>
+    <button id="special">Set Special</button>
+    <p id="specialMsg"></p>
+</div>
+<!-- Analytics Dashboard -->
+<div class="card">
+    <div id="analyticsDiv">Loading analytics...</div>
+</div>
+
+    </div>
+
+</div>
+<script type="module" src="staff.js"></script>
+</body>
+</html>

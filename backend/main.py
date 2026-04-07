@@ -190,7 +190,7 @@ def set_daily_special(special: SpecialModel):
     return {"message": f"⭐ Daily special set to {special.special.capitalize()}"}
 
 @app.post("/menu/availability")
-def toggle_availability(data: AvailabilityModel):
+async def toggle_availability(data: AvailabilityModel):
     staff_user = users_col.find_one({"username": data.username, "role": "staff"})
     if not staff_user:
         raise HTTPException(status_code=403, detail="Unauthorized")
@@ -199,8 +199,16 @@ def toggle_availability(data: AvailabilityModel):
         {"$set": {f"availability.{data.name.lower()}": data.available}}
     )
     status = "available" if data.available else "unavailable"
-    return {"message": f"✅ {data.name.capitalize()} marked as {status}"}
 
+    # Broadcast to all connected students
+    message = f"⚠️ {data.name.capitalize()} is now {status}."
+    for student_id, conn in list(active_connections.items()):
+        try:
+            await conn.send_text(message)
+        except Exception:
+            active_connections.pop(student_id, None)
+
+    return {"message": f"✅ {data.name.capitalize()} marked as {status}"}
 @app.get("/menu/special")
 def get_daily_special():
     menu_doc = menu_col.find_one({})

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Canteen AI Chat</title>
+<link rel="stylesheet" href="student.css">
+</head>
+<body>
+<div class="header1">🍽️SMART <span>CANTEEN</span> ASSISTANT</div>
+<div class="container">
+
+    <!-- Sign Up / Login -->
+    <div id="authDiv" class="card">
+        <h2 id="loghead">Smart Canteen Student</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="login" class="loginbtn">Login</button>
+            <button id="signup" class="signupbtn">Sign Up</button>
+        </div>
+        <p id="authError" class="error"></p>
+    </div>
+
+    <!-- Chat Dashboard -->
+    <div id="chatDiv" style="display:none;">
+        <div class="header">
+            <h2>Welcome, <span id="studentName"></span></h2>
+            <button class="logout-btn" id="logout">Logout</button>
+        </div>
+
+        <div class="card chat-card">
+            <div id="chatBox" class="chat-box"></div>
+
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Type your message...">
+                <button id="mic-btn">🎙️</button>
+                <button onclick="sendMessage()" id="send-btn">Send</button>
+            </div>
+        </div>
+
+        <div class="top-left-btns">
+            <button id="recentOrdersBtn">📦 Recent Orders</button>
+        </div>
+
+        <div id="orderHistorySection" class="history-box">
+            <h3>📦 Recent Orders</h3>
+            <div id="orderHistoryList"></div>
+        </div>
+
+    </div> <!-- closing chatDiv -->
+
+</div> <!-- closing container -->
+<!-- Notification Container -->
+<div id="notifications" class="notification-container"></div>
+
+<script type="module" src="student.js"></script>
+</body>
+</html>
