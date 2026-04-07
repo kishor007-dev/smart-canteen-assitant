@@ -254,26 +254,30 @@ async function loadAnalytics() {
             <h3 style="margin:0 0 10px 0;">📊 Dashboard</h3>
             <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
                 <div style="background:#e8f5e9;padding:10px 18px;border-radius:8px;text-align:center;min-width:90px;">
-                    <div style="font-size:22px;font-weight:bold;">${data.today_orders}</div>
+                    <div style="font-size:22px;font-weight:bold;color:purple">${data.today_orders}</div>
                     <div style="font-size:12px;color:#555;">Orders Today</div>
                 </div>
                 <div style="background:#e3f2fd;padding:10px 18px;border-radius:8px;text-align:center;min-width:90px;">
-                    <div style="font-size:22px;font-weight:bold;">₹${data.today_revenue}</div>
+                    <div style="font-size:22px;font-weight:bold;color:green">₹${data.today_revenue}</div>
                     <div style="font-size:12px;color:#555;">Revenue Today</div>
                 </div>
                 <div style="background:#fff8e1;padding:10px 18px;border-radius:8px;text-align:center;min-width:90px;">
-                    <div style="font-size:22px;font-weight:bold;">${data.pending}</div>
+                    <div style="font-size:22px;font-weight:bold;color:red">${data.pending}</div>
                     <div style="font-size:12px;color:#555;">Pending</div>
                 </div>
                 <div style="background:#fce4ec;padding:10px 18px;border-radius:8px;text-align:center;min-width:90px;">
-                    <div style="font-size:22px;font-weight:bold;">${data.completed}</div>
+                    <div style="font-size:22px;font-weight:bold;color:pink">${data.completed}</div>
                     <div style="font-size:12px;color:#555;">Completed</div>
                 </div>
             </div>
             <strong>🔥 Top Items (All Time):</strong>
-            <ul style="margin:6px 0 0 18px;padding:0;">
-                ${data.popular_items.map(i => `<li>${i.item} — <strong>${i.count}</strong> orders</li>`).join("")}
-            </ul>
+            <ul style="margin:6px 0 0 0;padding:0;list-style:none;">
+    ${data.popular_items.map(i => `
+        <li style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #eee;">
+            <span>${i.item}</span>
+            <strong style="min-width:40px;text-align:right;">${i.count} orders</strong>
+        </li>`).join("")}
+</ul>
         `;
     } catch (err) { console.error("Analytics error:", err); }
 }
