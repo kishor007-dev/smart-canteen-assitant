@@ -19,7 +19,7 @@
 Smart Canteen AI is a full-stack web application that streamlines food ordering in college canteens.
 
 It allows:
-- Students to interact with an AI assistant for food recommendations and ordering  
+- Students to interact with an AI assistant for food recommendations and ordering 
 - Staff to manage menu items and track orders in real time  
 
 The system combines **AI, real-time communication, and cloud deployment** to deliver a modern canteen experience.
